@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar max-height="56px" color="primary" dark>{{ title }}</v-app-bar>
+    <v-app-bar max-height="56px" color="primary" dark v-if="!$route.meta.fullscreen">{{ title }}</v-app-bar>
     <v-main>
       <router-view/>
     </v-main>

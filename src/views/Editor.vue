@@ -2,6 +2,10 @@
   <div style="height: 100%">
     <split-container style="height: 100%" position_key="editor_split_line" :max_percent="70" :min_percent="30">
 
+      <template #left>
+        <e-signage-viewer :json_data="json_data" absolute></e-signage-viewer>
+      </template>
+
       <template #right>
         <div style="padding: 15px; gap: 15px; display:flex; flex-direction: column">
 
@@ -33,6 +37,9 @@
                       </div>
                       <v-spacer></v-spacer>
                       <div class="text-right">
+                        <v-btn icon @click="edit_item(item)">
+                          <v-icon>mdi-lead-pencil</v-icon>
+                        </v-btn>
                         <v-btn icon color="error" @click="remove_item(item)">
                           <v-icon>mdi-trash-can-outline</v-icon>
                         </v-btn>
@@ -62,10 +69,12 @@ import SplitContainer from "@/components/SplitContainer.vue";
 import ItemEditDialog from "@/components/ItemEditDialog.vue";
 import WindowItem from "@/components/WindowItem.vue";
 import {export_zip, import_zip, open_file_picker} from "@/helpers/ExportImportHelper.js";
+import ESignageViewer from "@/components/E-Signage-Viewer.vue";
+import {is_in_use, layout_windows} from "@/helpers/Global.js";
 
 export default {
   name: "Editor",
-  components: {WindowItem, ItemEditDialog, SplitContainer, LayoutSelector},
+  components: {ESignageViewer, WindowItem, ItemEditDialog, SplitContainer, LayoutSelector},
   data() {
     let windows = {};
     for (let i = 1; i < 5; i++) {
@@ -86,12 +95,16 @@ export default {
       name: "E-Signage",
       selected_layout: '1',
       windows: windows,
-      layout_windows: {
-        '1': ['1'],
-        '2': ['1', '2'],
-        '3': ['1', '2', '3'],
-        '4': ['1', '2', '3', '4'],
-      }
+      layout_windows: layout_windows
+    }
+  },
+  computed: {
+    json_data() {
+      return {
+        name: this.name,
+        selected_layout: this.selected_layout,
+        windows: this.windows,
+      };
     }
   },
   mounted() {
@@ -99,7 +112,7 @@ export default {
   },
   methods: {
     is_in_use(channel) {
-      return this.layout_windows[`${this.selected_layout}`].includes(`${channel}`)
+      return is_in_use(this.selected_layout, channel);
     },
     create_item(channel) {
       this.$refs.item_edit_dialog.open({channel});
@@ -115,11 +128,7 @@ export default {
     },
     async download_zip() {
       this.UI.btn_download.is_loading = true;
-      await export_zip({
-        name: this.name,
-        selected_layout: this.selected_layout,
-        windows: this.windows,
-      })
+      await export_zip(this.json_data)
       this.UI.btn_download.is_loading = false;
 
     },
@@ -147,6 +156,9 @@ export default {
       }
 
 
+    },
+    edit_item(item) {
+      this.$refs.item_edit_dialog.open(item);
     }
   }
 }

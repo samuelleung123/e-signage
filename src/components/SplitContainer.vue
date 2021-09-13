@@ -173,6 +173,7 @@ export default {
     cursor: col-resize;
     user-select: none;
     box-sizing: content-box;
+    z-index: 1;
 
     &.is-moving {
       &:before, &:after {
@@ -204,7 +205,7 @@ export default {
   }
 
   .left-side, .right-side {
-
+    position: relative;
   }
 }
 

@@ -15,7 +15,10 @@ const routes = [
   {
     path: '/viewer',
     name: 'Viewer',
-    component: Viewer
+    component: Viewer,
+    meta: {
+      fullscreen: true
+    },
   },
   {
     path: '/editor',

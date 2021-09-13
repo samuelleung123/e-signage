@@ -2,7 +2,8 @@
   <div class="window-item">
     <template v-if="item">
       <img v-if="item.is_image" :src="item.url" class="item-content" @load="loaded"/>
-      <video v-else-if="item.is_video" :src="item.url" class="item-content" :controls="video_control" @loadeddata="loaded"/>
+      <video v-else-if="item.is_video" :src="item.url" ref="video" class="item-content" :autoplay="autoplay"
+             :controls="video_control" @loadeddata="loaded"/>
     </template>
   </div>
 </template>
@@ -17,10 +18,38 @@ export default {
         return false;
       }
     },
+    is_current: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
+    autoplay: {
+      type: Boolean,
+      default() {
+        return false;
+      }
+    },
     item: {
       type: Object,
       default() {
         return null;
+      }
+    }
+  },
+  watch: {
+    is_current(is_current) {
+      if (!this.$refs.video) {
+        return;
+      }
+
+      let video = this.$refs.video;
+
+      if (is_current && this.autoplay) {
+        video.currentTime = 0;
+        video.play();
+      } else {
+        video.pause();
       }
     }
   },
