@@ -1,6 +1,6 @@
 # e-signage
 
-Demo: https://samuelleung123.github.io/e-signage/dist/#/
+Demo: [https://samuelleung123.github.io/e-signage/dist/#/](https://samuelleung123.github.io/e-signage/dist/#/)
 
 1. Enter the Editor
 2. Add some image/video
