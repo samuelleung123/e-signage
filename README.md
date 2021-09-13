@@ -1,5 +1,15 @@
 # e-signage
 
+Demo: https://samuelleung123.github.io/e-signage/dist/#/
+
+1. Enter the Editor
+2. Add some image/video
+3. Click Download, save the zip file
+4. Enter Viewer
+5. Click Open, select the zip file
+
+
+
 ## Project setup
 ```
 npm install
