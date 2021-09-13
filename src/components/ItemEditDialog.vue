@@ -24,11 +24,13 @@
         </v-toolbar-items>
       </v-toolbar>
 
-      <v-form v-if="item" style="padding: 15px; gap: 15px" class="d-flex flex-column">
+      <v-form v-if="item" ref="form" style="padding: 15px; gap: 15px" class="d-flex flex-column">
         <window-item :item="item" style="min-height: 300px" video_control @loaded="loaded"></window-item>
         <v-file-input :rules="rules.file"
+                      :value="item.file"
                       label="File"
-                      placeholder="File"
+                      :placeholder="item.file && item.file.name"
+                      persistent-placeholder
                       hide-details="auto"
                       @change="change_file"
         ></v-file-input>
@@ -52,10 +54,15 @@ export default {
       title: null,
       show: false,
       item: null,
-      rules: {
+
+    }
+  },
+  computed: {
+    rules() {
+      return {
         file: [
-          (v) => v != null || "File cannot be empty!",
-          (v) => v && (v.type.includes('image/') || v.type.includes('video/')) || "File must be image/video!",
+          () => (this.item.file != null) || "File cannot be empty!",
+          () => this.item.file && (this.item.file.type.includes('image/') || this.item.file.type.includes('video/')) || "File must be image/video!",
         ]
       }
     }
@@ -100,6 +107,10 @@ export default {
       this.item = item;
     },
     save() {
+      if (!this.$refs.form.validate()) {
+        return;
+      }
+
       this.$emit('save', this.item);
       this.close();
     },

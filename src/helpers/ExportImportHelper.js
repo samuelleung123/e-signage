@@ -51,7 +51,7 @@ export function open_file_picker() {
     return new Promise(resolve => {
         let input = document.createElement('input');
         input.type = "file";
-        input.accept = '*.zip';
+        input.accept = '.zip';
         input.oncancel = () => {
             resolve(null);
         }
