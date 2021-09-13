@@ -3,7 +3,7 @@
     <split-container style="height: 100%" position_key="editor_split_line" :max_percent="70" :min_percent="30">
 
       <template #left>
-        <e-signage-viewer :json_data="json_data" absolute></e-signage-viewer>
+        <e-signage-viewer v-if="UI.viewer.exists" :json_data="json_data" absolute></e-signage-viewer>
       </template>
 
       <template #right>
@@ -11,6 +11,7 @@
           <div class="d-flex " style="gap: 5px">
             <v-btn :loading="UI.btn_open.is_loading" @click="open_zip" color="primary">Open</v-btn>
             <v-btn :loading="UI.btn_download.is_loading" @click="download_zip" color="primary">Download</v-btn>
+            <v-btn @click="restart_viewer()" color="success">Restart</v-btn>
             <v-spacer></v-spacer>
             <v-btn @click="$router.back()" color="error" >Back</v-btn>
           </div>
@@ -29,7 +30,7 @@
                 <span v-if="!is_in_use(channel)" class="error--text pl-3">(Not In Use)</span>
               </v-expansion-panel-header>
               <v-expansion-panel-content>
-                <div class="d-flex flex-column" style="gap: 15px">
+                <draggable class="d-flex flex-column" style="gap: 15px" v-model="windows[channel]">
                   <div v-for="item in items" :key="item.id" class="d-flex align-stretch" style="gap: 15px">
                     <window-item :item="item" style="width: 100px; height: 100px"></window-item>
                     <div class="d-flex flex-column" style="flex: 1">
@@ -47,7 +48,7 @@
                       </div>
                     </div>
                   </div>
-                </div>
+                </draggable>
 
                 <div class="text-center pt-3">
                   <v-btn color="primary" @click="create_item(channel)">Add Item</v-btn>
@@ -72,10 +73,12 @@ import WindowItem from "@/components/WindowItem.vue";
 import {export_zip, import_zip, open_file_picker} from "@/helpers/ExportImportHelper.js";
 import ESignageViewer from "@/components/E-Signage-Viewer.vue";
 import {is_in_use, layout_windows} from "@/helpers/Global.js";
+import draggable from 'vuedraggable'
+
 
 export default {
   name: "Editor",
-  components: {ESignageViewer, WindowItem, ItemEditDialog, SplitContainer, LayoutSelector},
+  components: {ESignageViewer, WindowItem, ItemEditDialog, SplitContainer, LayoutSelector, draggable},
   data() {
     let windows = {};
     for (let i = 1; i < 5; i++) {
@@ -92,11 +95,14 @@ export default {
         btn_download: {
           is_loading: false,
         },
+        viewer: {
+          exists: true,
+        }
       },
       name: "E-Signage",
       selected_layout: '1',
       windows: windows,
-      layout_windows: layout_windows
+      layout_windows: layout_windows,
     }
   },
   computed: {
@@ -160,6 +166,11 @@ export default {
     },
     edit_item(item) {
       this.$refs.item_edit_dialog.open(item);
+    },
+    async restart_viewer() {
+      this.UI.viewer.exists = false;
+      await this.$nextTick();
+      this.UI.viewer.exists = true;
     }
   }
 }
