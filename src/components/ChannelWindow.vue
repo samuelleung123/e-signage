@@ -72,7 +72,6 @@ export default {
       return this.query.slice(0, this.buffer_size);
     },
     set_channel(new_channel) {
-      console.log('new_channel', new_channel);
       this.query = new_channel.concat([]);
       if (this.query.length) {
         this.duration = this.query[0].duration;

@@ -15,6 +15,11 @@
         Exit Fullscreen
       </v-btn>
 
+      <v-spacer></v-spacer>
+
+      <v-btn color="error" tile class="btn-fullscreen" @click="$router.back()">
+        Back
+      </v-btn>
     </div>
 
   </div>
@@ -37,7 +42,7 @@ export default {
       json_data: null,
     }
   },
-  created() {
+  mounted() {
     document.querySelectorAll('html, body').forEach((el) => {
       el.style.overflowY = 'hidden';
     })

@@ -8,15 +8,16 @@
 
       <template #right>
         <div style="padding: 15px; gap: 15px; display:flex; flex-direction: column">
+          <div class="d-flex " style="gap: 5px">
+            <v-btn :loading="UI.btn_open.is_loading" @click="open_zip" color="primary">Open</v-btn>
+            <v-btn :loading="UI.btn_download.is_loading" @click="download_zip" color="primary">Download</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn @click="$router.back()" color="error" >Back</v-btn>
+          </div>
 
           <v-text-field v-model="name" type="text" label="Name" placeholder="E-Signage" persistent-placeholder/>
 
           <layout-selector v-model="selected_layout" label="Layout"></layout-selector>
-
-          <div class="d-flex " style="gap: 5px">
-            <v-btn :loading="UI.btn_open.is_loading" @click="open_zip" color="primary">Open</v-btn>
-            <v-btn :loading="UI.btn_download.is_loading" @click="download_zip" color="primary">Download</v-btn>
-          </div>
 
           <v-expansion-panels>
             <v-expansion-panel

@@ -53,7 +53,8 @@ export default {
   created() {
     let last_position = localStorage.getItem(this.save_key);
     if (last_position) {
-      this.position = last_position;
+      last_position = this.get_position_in_range(parseInt(last_position));
+      this.set_position(last_position)
     } else {
       this.position = this.default_position;
     }
@@ -69,7 +70,6 @@ export default {
         this.is_moving = false;
         return;
       }
-      console.log(e);
       let position = e.clientX || e.touchmoveX;
       if(this.$vuetify.breakpoint.mdAndDown) {
         position = e.clientY || e.touchmoveY
@@ -91,6 +91,17 @@ export default {
   methods: {
     move_line(x) {
       x = x - 1;
+      x = this.get_position_in_range(x);
+      this.is_moving = true;
+      this.set_position(x);
+      if (this.position_key) {
+        this.save_position()
+      }
+    },
+    set_position(x) {
+      this.position = `${x}px`;
+    },
+    get_position_in_range(x) {
 
       let window_length = this.$vuetify.breakpoint.mdAndDown ? window.innerHeight : window.innerWidth;
 
@@ -103,11 +114,8 @@ export default {
       if (min) {
         x = Math.max(min, x);
       }
-      this.is_moving = true;
-      this.position = `${x}px`;
-      if (this.position_key) {
-        this.save_position()
-      }
+
+      return x;
     },
     async save_position() {
       localStorage.setItem(this.save_key, this.position);
