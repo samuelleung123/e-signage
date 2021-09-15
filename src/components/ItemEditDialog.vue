@@ -35,6 +35,7 @@
                       @change="change_file"
         ></v-file-input>
 
+        <v-select v-model="item.channel" label="Channel" :rules="rules.channel" :items="channel_items"/>
         <v-text-field v-model="item.duration" type="number" label="Duration"/>
 
       </v-form>
@@ -45,6 +46,7 @@
 
 <script>
 import WindowItem from "@/components/WindowItem.vue";
+import {Channels} from "@/helpers/Global.js";
 
 export default {
   name: "ItemEditDialog",
@@ -54,7 +56,7 @@ export default {
       title: null,
       show: false,
       item: null,
-
+      channel_items: Channels,
     }
   },
   computed: {
@@ -63,6 +65,10 @@ export default {
         file: [
           () => (this.item.file != null) || "File cannot be empty!",
           () => this.item.file && (this.item.file.type.includes('image/') || this.item.file.type.includes('video/')) || "File must be image/video!",
+        ],
+        channel: [
+          (v) => (v != null) || "Channel cannot be empty!",
+
         ]
       }
     }

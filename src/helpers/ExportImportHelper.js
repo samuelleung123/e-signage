@@ -7,13 +7,20 @@ export async function export_zip(data) {
     data.name = data.name || "E-Signage";
     data.windows = {...data.windows};
 
-    let folder = zip.folder('file')
+    let folder = zip.folder('file');
+
+    let saved_file = [];
 
     for (let channel in data.windows) {
         data.windows[channel] = data.windows[channel].map(i => ({...i}));
 
         data.windows[channel].forEach(item => {
-            folder.file(item.file.name, item.file);
+            if (!saved_file.includes(item.file.name)) {
+                folder.file(item.file.name, item.file, {
+                    compression: "STORE"
+                });
+                saved_file.push(item.file.name);
+            }
             item.file = item.file.name;
         })
     }
@@ -31,18 +38,35 @@ export async function import_zip(zip_file) {
     let data = JSON.parse(json);
     let folder = zip.folder('file');
     let p = [];
+    let file_map = new Map();
     for (let channel in data.windows) {
         p = data.windows[channel].map(async (item) => {
+            let file_type;
             let filename = item.file;
-            item.file = await folder.file(`${item.file}`).async('blob');
-            item.file.name = filename;
+            if (item.is_image) {
+                file_type = 'image/';
+            }
+            if (item.is_video) {
+                file_type = 'video/';
+            }
+            file_type += filename.split('.').pop()
+
+            if (file_map.has(filename)) {
+                item.file = file_map.get(filename);
+            } else {
+                item.file = await folder.file(`${item.file}`).async('blob');
+                item.file = new File([item.file], filename, {
+                    type: file_type
+                })
+                file_map.set(filename, item.file);
+            }
             item.url = URL.createObjectURL(item.file);
         }).concat(p);
     }
 
     await Promise.all(p);
 
-    console.log(data);
+    // console.log(data);
 
     return data;
 }

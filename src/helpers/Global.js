@@ -5,6 +5,8 @@ export const layout_windows = {
     '4': ['1', '2', '3', '4'],
 };
 
+export const Channels = ['1', '2', '3', '4'];
+
 export function is_in_use(layout, channel) {
     return layout_windows[`${layout}`].includes(`${channel}`)
 }

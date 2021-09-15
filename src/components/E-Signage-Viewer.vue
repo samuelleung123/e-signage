@@ -3,6 +3,7 @@
   <div class="e-signage-viewer" :class="get_viewer_classes()">
     <channel-window
         v-for="channel in layout_windows[json_data.selected_layout]"
+        ref="channels"
         :key="channel"
         :channel="json_data.windows[channel]"
         :trigger="trigger"
@@ -45,6 +46,9 @@ export default {
     this.loop_id = setInterval(() => {
       this.trigger = (this.trigger + 1) % 2
     }, 1000);
+  },
+  mounted() {
+    this.$refs.channels.forEach(channel => channel.play());
   },
   beforeDestroy() {
     clearInterval(this.loop_id);

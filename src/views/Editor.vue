@@ -8,12 +8,12 @@
 
       <template #right>
         <div style="padding: 15px; gap: 15px; display:flex; flex-direction: column">
-          <div class="d-flex " style="gap: 5px">
+          <div class="d-flex flex-wrap " style="gap: 5px">
             <v-btn :loading="UI.btn_open.is_loading" @click="open_zip" color="primary">Open</v-btn>
             <v-btn :loading="UI.btn_download.is_loading" @click="download_zip" color="primary">Download</v-btn>
             <v-btn @click="restart_viewer()" color="success">Restart</v-btn>
             <v-spacer></v-spacer>
-            <v-btn @click="$router.back()" color="error" >Back</v-btn>
+            <v-btn @click="$router.back()" color="error">Back</v-btn>
           </div>
 
           <v-text-field v-model="name" type="text" label="Name" placeholder="E-Signage" persistent-placeholder/>
@@ -34,11 +34,14 @@
                   <div v-for="item in items" :key="item.id" class="d-flex align-stretch" style="gap: 15px">
                     <window-item :item="item" style="width: 100px; height: 100px"></window-item>
                     <div class="d-flex flex-column" style="flex: 1">
-                      <div>
+                      <div style="word-break: break-all;">
                         {{ item.file.name }}
                       </div>
                       <v-spacer></v-spacer>
                       <div class="text-right">
+                        <v-btn icon @click="copy_item(item)">
+                          <v-icon>mdi-content-copy</v-icon>
+                        </v-btn>
                         <v-btn icon @click="edit_item(item)">
                           <v-icon>mdi-lead-pencil</v-icon>
                         </v-btn>
@@ -72,7 +75,7 @@ import ItemEditDialog from "@/components/ItemEditDialog.vue";
 import WindowItem from "@/components/WindowItem.vue";
 import {export_zip, import_zip, open_file_picker} from "@/helpers/ExportImportHelper.js";
 import ESignageViewer from "@/components/E-Signage-Viewer.vue";
-import {is_in_use, layout_windows} from "@/helpers/Global.js";
+import {Channels, is_in_use, layout_windows} from "@/helpers/Global.js";
 import draggable from 'vuedraggable'
 
 
@@ -81,9 +84,11 @@ export default {
   components: {ESignageViewer, WindowItem, ItemEditDialog, SplitContainer, LayoutSelector, draggable},
   data() {
     let windows = {};
-    for (let i = 1; i < 5; i++) {
+
+    Channels.forEach(i => {
       windows[`${i}`] = [];
-    }
+    });
+
     return {
       UI: {
         item_dialog: {
@@ -166,6 +171,11 @@ export default {
     },
     edit_item(item) {
       this.$refs.item_edit_dialog.open(item);
+    },
+    copy_item(item) {
+      let new_item = {...item};
+      delete new_item.id;
+      this.$refs.item_edit_dialog.open(new_item);
     },
     async restart_viewer() {
       this.UI.viewer.exists = false;

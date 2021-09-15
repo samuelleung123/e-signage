@@ -1,6 +1,7 @@
 <template>
   <div class="channel-window">
     <window-item v-for="(item, index) in buffer_channel()"
+                 ref="window_items"
                  :key="item.id"
                  :is_current="index === 0"
                  :item="item"
@@ -48,7 +49,7 @@ export default {
     channel(new_channel) {
       this.set_channel(new_channel);
     },
-    trigger() {
+    async trigger() {
       if (this.query.length === 0) {
         return;
       }
@@ -58,6 +59,8 @@ export default {
         this.query.push(item);
         this.duration = this.query[0].duration;
         this.$forceUpdate();
+        await this.$nextTick();
+        this.play();
       } else {
         this.duration = this.duration - 1;
       }
@@ -70,6 +73,9 @@ export default {
       }
 
       return this.query.slice(0, this.buffer_size);
+    },
+    play() {
+      this.$refs.window_items[0].play();
     },
     set_channel(new_channel) {
       this.query = new_channel.concat([]);

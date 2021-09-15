@@ -2,13 +2,14 @@
   <div class="window-item">
     <template v-if="item">
       <img v-if="item.is_image" :src="item.url" class="item-content" @load="loaded"/>
-      <video v-else-if="item.is_video" :src="item.url" ref="video" class="item-content" :autoplay="autoplay"
+      <video v-else-if="item.is_video" :src="item.url" ref="video" class="item-content" :autoplay="is_current && autoplay"
              :controls="video_control" @loadeddata="loaded"/>
     </template>
   </div>
 </template>
 
 <script>
+
 export default {
   name: "WindowItem",
   props: {
@@ -39,23 +40,28 @@ export default {
   },
   watch: {
     is_current(is_current) {
-      if (!this.$refs.video) {
-        return;
-      }
-
-      let video = this.$refs.video;
-
-      if (is_current && this.autoplay) {
-        video.currentTime = 0;
-        video.play();
-      } else {
-        video.pause();
+      if (is_current) {
+        this.play();
       }
     }
   },
   methods: {
     loaded(e) {
       this.$emit('loaded', e);
+    },
+    play() {
+      if (!this.$refs.video) {
+        return;
+      }
+
+      let video = this.$refs.video;
+
+      if (this.autoplay) {
+        video.currentTime = 0;
+        video.play();
+      } else {
+        video.pause();
+      }
     }
   }
 }
