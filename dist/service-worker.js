@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "precache-manifest.db90c0fd3e4d00ac58319c2e61369be6.js"
+  "precache-manifest.f59b89000f140cc8e89a90432c942c40.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "e-signage"});
